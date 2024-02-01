@@ -92,12 +92,6 @@ class ActionsInvoicingorientedorders
 			$productAlready[] = $line->fk_product;
 
 		}
-
-
-		$t = [];
-		$a = $t[3];
-		$a = $t->toto;
-
 		if ($object->element == "commande") {
 			if ( !isset($object->linkedObjects['facture']) || empty($object->linkedObjects['facture'])) {
 				return 0;
