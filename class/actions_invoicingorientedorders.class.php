@@ -111,15 +111,22 @@ class ActionsInvoicingorientedorders
 			if ($skip) {
 				$label .= ($lineorder->fk_product_type == 0 ? img_object($langs->trans(''), 'product') : img_object($langs->trans(''), 'service') ). " " .  $lineorder->ref . " - " . (!empty($lineorder->label) ? $lineorder->label: $lineorder->libelle );
 				echo '<tr> 	<td class="linecolref"> ' . $label . $lineorder->label . ' </td>
-										<td class="linecoldescription"> ' . $lineorder->desc . ' </td>
-										<td class="linecolvat right"> ' . vatrate($lineorder->tva_tx, true) . ' </td>
-										<td class="linecoluht right"> ' . price($lineorder->subprice) . ' </td>
-										<td class="linecoluht_currency right">  ' . price($lineorder->multicurrency_subprice) . ' </td>
-										<td class="linecolqty right"> ' . $qtyfactured ."/". $lineorder->qty . ' </td>
-										<td class="linecoldiscount right"> ' . vatrate($lineorder->remise_percent,true) . ' </td>
-										<td class="linecolht right"> ' . price($lineorder->total_ht) . ' </td>
-										<td class="center"> <input id="cb' . $lineorder->id . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $lineorder->id . '" checked="checked" onclick="return false;"> </td>
-								</tr> ';
+							<td class="linecoldescription"> ' . $lineorder->desc . ' </td>
+							<td class="linecolvat right"> ' . vatrate($lineorder->tva_tx, true) . ' </td>
+							<td class="linecoluht right"> ' . price($lineorder->subprice) . ' </td>';
+				if (isModEnabled("multicurrency")) {
+					print '<td class="linecoluht_currency right">  ' . price($lineorder->multicurrency_subprice) . ' </td>';
+				}
+				print '<td class="linecolqty right"> ' . $qtyfactured ."/". $lineorder->qty . ' </td>';
+				if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+					print '<td class="linecoluseunit left">'.$lineorder->getLabelOfUnit('long').'</td>';
+				}
+
+				echo '
+						<td class="linecoldiscount right"> ' . vatrate($lineorder->remise_percent,true) . ' </td>
+						<td class="linecolht right"> ' . price($lineorder->total_ht) . ' </td>
+						<td class="center"> <input id="cb' . $lineorder->id . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $lineorder->id . '" checked="checked" onclick="return false;"> </td>
+					</tr> ';
 			}
 			?>
 
