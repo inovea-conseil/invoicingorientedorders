@@ -125,7 +125,7 @@ class ActionsInvoicingorientedorders
 				echo '
 						<td class="linecoldiscount right"> ' . vatrate($lineorder->remise_percent,true) . ' </td>
 						<td class="linecolht right"> ' . price($lineorder->total_ht) . ' </td>
-						<td class="center"> <input id="cb' . $lineorder->id . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $lineorder->id . '" checked="checked" onclick="return false;"> </td>
+						<td class="center"> <input id="cb' . $lineorder->id . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $lineorder->id . '" checked="checked" > </td>
 					</tr> ';
 			}
 			?>
