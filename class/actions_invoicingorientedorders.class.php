@@ -83,9 +83,10 @@ class ActionsInvoicingorientedorders
 		$qtyfactured = 0;
 		$label ="";
 		$productAlready = array();
-		$skip = 0;
+		$skip = 1;
 		foreach ($object->lines as $line ) {
 			if (in_array($line->fk_product,$productAlready)) {
+				$skip = 0;
 				break;
 			}
 			$productAlready[] = $line->fk_product;
@@ -96,19 +97,20 @@ class ActionsInvoicingorientedorders
 				return 0;
 			}
 			foreach ($object->linkedObjects['facture'] as $invoice ) {
-				if ($invoice->type != 0) {
+				if ($invoice->type != 0 ) {
+					$skip = 0;
 					break;
 				}
 				if (dolibarr_get_const($db, "INVOICINGORIENTEDORDERS_COUNTDRAFTS") || $invoice->status != $invoice::STATUS_DRAFT) {
 					foreach ($invoice->lines as $line) {
 						if ($lineorder->fk_product == $line->fk_product) {
-							$skip = 1;
 							$qtyfactured += $line->qty;
 							break;
 						}
 					}
 				} else {
 					if(dolibarr_get_const($db, "INVOICINGORIENTEDORDERS_BLOCKIFDRAFTS")) {
+						$skip = 0;
 						break;
 					}
 				}
