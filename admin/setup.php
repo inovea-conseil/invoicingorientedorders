@@ -50,7 +50,7 @@ if (!$res) {
 	die("Include of main fails");
 }
 
-global $langs, $user;
+global $langs, $user,$db,$conf;
 
 // Libraries
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
@@ -98,10 +98,11 @@ $formSetup = new FormSetup($db);
 
 
 // HTTP HOST
-$item = $formSetup->newItem('NO_PARAM_JUST_TEXT');
-$item->fieldOverride = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
-$item->cssClass = 'minwidth500';
+//$item = $formSetup->newItem('NO_PARAM_JUST_TEXT');
+//$item->fieldOverride = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
+//$item->cssClass = 'minwidth500';
 
+/*
 // Setup conf INVOICINGORIENTEDORDERS_MYPARAM1 as a simple string input
 $item = $formSetup->newItem('INVOICINGORIENTEDORDERS_MYPARAM1');
 $item->defaultFieldValue = 'default value';
@@ -110,13 +111,14 @@ $item->defaultFieldValue = 'default value';
 $item = $formSetup->newItem('INVOICINGORIENTEDORDERS_MYPARAM2');
 $item->nameText = $item->getNameText().' more html text ';
 
-// Setup conf INVOICINGORIENTEDORDERS_MYPARAM3
+// Setup conf INVOICINGORIENTEDORDERS_MYPARAM31000000000
 $item = $formSetup->newItem('INVOICINGORIENTEDORDERS_MYPARAM3');
 $item->setAsThirdpartyType();
-
+*/
 // Setup conf INVOICINGORIENTEDORDERS_MYPARAM4 : exemple of quick define write style
-$formSetup->newItem('INVOICINGORIENTEDORDERS_MYPARAM4')->setAsYesNo();
-
+$formSetup->newItem('INVOICINGORIENTEDORDERS_COUNTDRAFTS')->setAsYesNo();
+$item = $formSetup->newItem('INVOICINGORIENTEDORDERS_BLOCKIFDRAFTS')->setAsYesNo();
+/*
 // Setup conf INVOICINGORIENTEDORDERS_MYPARAM5
 $formSetup->newItem('INVOICINGORIENTEDORDERS_MYPARAM5')->setAsEmailTemplate('thirdparty');
 
@@ -152,7 +154,7 @@ $item->setAsColor();
 $item->defaultFieldValue = '#FF0000';
 $item->nameText = $item->getNameText().' more html text ';
 $item->fieldInputOverride = '';
-$item->helpText = $langs->transnoentities('AnHelpMessage');
+$item->helpText = $langs->transnoentities('AnHelpMessage');*/
 //$item->fieldValue = '';
 //$item->fieldAttr = array() ; // fields attribute only for compatible fields like input text
 //$item->fieldOverride = false; // set this var to override field output will override $fieldInputOverride and $fieldOutputOverride too
@@ -299,7 +301,7 @@ print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "invo
 // Setup page goes here
 echo '<span class="opacitymedium">'.$langs->trans("InvoicingorientedordersSetupPage").'</span><br><br>';
 
-
+/*
 if ($action == 'edit') {
 	print $formSetup->generateOutput(true);
 	print '<br>';
@@ -310,7 +312,8 @@ if ($action == 'edit') {
 	print '</div>';
 } else {
 	print '<br>'.$langs->trans("NothingToSetup");
-}
+}*/
+print $formSetup->generateOutput();
 
 
 $moduledir = 'invoicingorientedorders';

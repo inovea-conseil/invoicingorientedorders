@@ -74,8 +74,8 @@ class ActionsInvoicingorientedorders
 
 	public function printOriginObjectLine($parameters, &$object, &$action, $hookmanager)
 	{
-		global $restrictlist, $selectedLines,$langs;
-
+		global $restrictlist, $selectedLines,$langs,$db;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 		/*if (DOL_VERSION > 14) {
 			return 0;
 		}*/
@@ -83,10 +83,9 @@ class ActionsInvoicingorientedorders
 		$qtyfactured = 0;
 		$label ="";
 		$productAlready = array();
-		$skip = 1;
+		$skip = 0;
 		foreach ($object->lines as $line ) {
 			if (in_array($line->fk_product,$productAlready)) {
-				$skip = 0;
 				break;
 			}
 			$productAlready[] = $line->fk_product;
@@ -97,13 +96,19 @@ class ActionsInvoicingorientedorders
 				return 0;
 			}
 			foreach ($object->linkedObjects['facture'] as $invoice ) {
-				if ($invoice->type != 0 ) {
-					$skip = 0;
+				if ($invoice->type != 0) {
 					break;
 				}
-				foreach ($invoice->lines as $line) {
-					if ($lineorder->fk_product == $line->fk_product ) {
-						$qtyfactured += $line->qty;
+				if (dolibarr_get_const($db, "INVOICINGORIENTEDORDERS_COUNTDRAFTS") || $invoice->status != $invoice::STATUS_DRAFT) {
+					foreach ($invoice->lines as $line) {
+						if ($lineorder->fk_product == $line->fk_product) {
+							$skip = 1;
+							$qtyfactured += $line->qty;
+							break;
+						}
+					}
+				} else {
+					if(dolibarr_get_const($db, "INVOICINGORIENTEDORDERS_BLOCKIFDRAFTS")) {
 						break;
 					}
 				}

@@ -72,7 +72,7 @@ class modInvoicingorientedorders extends DolibarrModules
 		$this->editor_url = 'https://www.inovea-conseil.com';
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated', 'experimental_deprecated' or a version string like 'x.y.z'
-		$this->version = '0.5';
+		$this->version = '0.6';
 		// Url to the file with your last numberversion of this module
 		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
@@ -129,7 +129,7 @@ class modInvoicingorientedorders extends DolibarrModules
 		$this->dirs = array("/invoicingorientedorders/temp");
 
 		// Config pages. Put here list of php page, stored into invoicingorientedorders/admin directory, to use to setup module.
-		//$this->config_page_url = array("setup.php@invoicingorientedorders");
+		$this->config_page_url = array("setup.php@invoicingorientedorders");
 
 		// Dependencies
 		// A condition to hide module

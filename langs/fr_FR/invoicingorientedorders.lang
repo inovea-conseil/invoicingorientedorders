@@ -25,13 +25,11 @@ ModuleInvoicingorientedordersDesc = 	Ce module vise à améliorer les procédure
 #
 # Admin page
 #
-InvoicingorientedordersSetup = Invoicingorientedorders setup
+InvoicingorientedordersSetup = setup du module Invoicingorientedorders
 Settings = Settings
-InvoicingorientedordersSetupPage = Invoicingorientedorders setup page
-INVOICINGORIENTEDORDERS_MYPARAM1 = My param 1
-INVOICINGORIENTEDORDERS_MYPARAM1Tooltip = My param 1 tooltip
-INVOICINGORIENTEDORDERS_MYPARAM2=My param 2
-INVOICINGORIENTEDORDERS_MYPARAM2Tooltip=My param 2 tooltip
+InvoicingorientedordersSetupPage = Page admin
+INVOICINGORIENTEDORDERS_COUNTDRAFTS = Inclure les factures brouillons dans le calcul du solde
+INVOICINGORIENTEDORDERS_BLOCKIFDRAFTS = Bloquer la création de facture de solde si une ou plusieurs factures sont en brouillons
 
 
 #
