@@ -25,7 +25,7 @@ ModuleInvoicingorientedordersDesc = 	Ce module vise à améliorer les procédure
 #
 # Admin page
 #
-InvoicingorientedordersSetup = setup du module Invoicingorientedorders
+InvoicingorientedordersSetup = setup du module Facturation des commandes orientées
 Settings = Settings
 InvoicingorientedordersSetupPage = Page admin
 INVOICINGORIENTEDORDERS_COUNTDRAFTS = Inclure les factures brouillons dans le calcul du solde
