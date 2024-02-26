@@ -76,9 +76,6 @@ class ActionsInvoicingorientedorders
 	{
 		global $restrictlist, $selectedLines,$langs,$db;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-		/*if (DOL_VERSION > 14) {
-			return 0;
-		}*/
 		$lineorder = &$parameters['line'];
 		$qtyfactured = 0;
 		$label ="";
@@ -108,11 +105,10 @@ class ActionsInvoicingorientedorders
 							break;
 						}
 					}
-				} else {
-					if(dolibarr_get_const($db, "INVOICINGORIENTEDORDERS_BLOCKIFDRAFTS")) {
-						$skip = 0;
-						break;
-					}
+				}
+				if(dolibarr_get_const($db, "INVOICINGORIENTEDORDERS_BLOCKIFDRAFTS")) {
+					$skip = 2;
+					break;
 				}
 			}
 			if ($skip) {
@@ -144,7 +140,7 @@ class ActionsInvoicingorientedorders
 					if ($('#formtocreate input[name="balance"]').length === 0) {
 						const bouton = $('<input type="submit"  class="button button-save "value="Créer facture de solde" name="balance">');
 
-						if (<?= $skip?> == 0) {
+						if (<?= $skip?> !== 1) {
 							bouton.prop( "disabled", true );
 						} else {
 							bouton.prop( "disabled", false );
