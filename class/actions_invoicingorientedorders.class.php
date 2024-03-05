@@ -106,9 +106,9 @@ class ActionsInvoicingorientedorders
 						}
 					}
 				}
-			}
-			if(dolibarr_get_const($db, "INVOICINGORIENTEDORDERS_BLOCKIFDRAFTS")) {
-				$skip = 2;
+				if(dolibarr_get_const($db, "INVOICINGORIENTEDORDERS_BLOCKIFDRAFTS") &&  $invoice->status == $invoice::STATUS_DRAFT) {
+					$skip = 2;
+				}
 			}
 			if ($skip) {
 				$label .= ($lineorder->fk_product_type == 0 ? img_object($langs->trans(''), 'product') : img_object($langs->trans(''), 'service') ). " " .  $lineorder->ref . " - " . (!empty($lineorder->label) ? $lineorder->label: $lineorder->libelle );
