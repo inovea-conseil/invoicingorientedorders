@@ -18,20 +18,18 @@
 #
 
 # Module label 'ModuleInvoicingorientedordersName'
-ModuleInvoicingorientedordersName = Invoicingorientedorders
+ModuleInvoicingorientedordersName = Assisted invoicing of orders
 # Module description 'ModuleInvoicingorientedordersDesc'
-ModuleInvoicingorientedordersDesc = Invoicingorientedorders description
+ModuleInvoicingorientedordersDesc = This module provides assisted billing for orders.
 
 #
 # Admin page
 #
-InvoicingorientedordersSetup = Invoicingorientedorders setup
+InvoicingorientedordersSetup = Setup for Module Assisted invoicing of orders
 Settings = Settings
-InvoicingorientedordersSetupPage = Invoicingorientedorders setup page
-INVOICINGORIENTEDORDERS_MYPARAM1 = My param 1
-INVOICINGORIENTEDORDERS_MYPARAM1Tooltip = My param 1 tooltip
-INVOICINGORIENTEDORDERS_MYPARAM2=My param 2
-INVOICINGORIENTEDORDERS_MYPARAM2Tooltip=My param 2 tooltip
+InvoicingorientedordersSetupPage = Admin page
+INVOICINGORIENTEDORDERS_COUNTDRAFTS = Include draft invoices in balance calculation
+INVOICINGORIENTEDORDERS_BLOCKIFDRAFTS = Block creation of balance invoice if one or more invoices are drafts
 
 
 #
