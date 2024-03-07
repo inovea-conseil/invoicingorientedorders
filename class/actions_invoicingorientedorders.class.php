@@ -82,13 +82,15 @@ class ActionsInvoicingorientedorders
 		$label ="";
 		$productAlready = array();
 		$skip = 1;
+		dol_syslog('invoicingorientedorders init skip: '.$skip, LOG_DEBUG);
 		foreach ($object->lines as $line ) {
-			if (in_array($line->fk_product,$productAlready)) {
+            $lineIsProduct = !is_null($line->fk_product) && ($line->product_type !== 9);
+			if (in_array($line->fk_product,$productAlready) && $lineIsProduct) {
 				$skip = 0;
+				dol_syslog('invoicingorientedorders skip: '.$skip.' line already in array or not product', LOG_DEBUG);
 				break;
 			}
 			$productAlready[] = $line->fk_product;
-
 		}
 		if ($object->element == "commande") {
 			if ( !isset($object->linkedObjects['facture']) || empty($object->linkedObjects['facture'])) {
@@ -97,6 +99,7 @@ class ActionsInvoicingorientedorders
 			foreach ($object->linkedObjects['facture'] as $invoice ) {
 				if ($invoice->type != 0 ) {
 					$skip = 0;
+					dol_syslog('invoicingorientedorders skip: '.$skip.' not standard invoice', LOG_DEBUG);
 					break;
 				}
 				if (dolibarr_get_const($db, "INVOICINGORIENTEDORDERS_COUNTDRAFTS") || $invoice->status != $invoice::STATUS_DRAFT) {
@@ -109,6 +112,7 @@ class ActionsInvoicingorientedorders
 				}
 				if(dolibarr_get_const($db, "INVOICINGORIENTEDORDERS_BLOCKIFDRAFTS") &&  $invoice->status == $invoice::STATUS_DRAFT) {
 					$skip = 2;
+					dol_syslog('invoicingorientedorders skip: '.$skip, LOG_DEBUG);
 				}
 			}
 			if ($skip) {
