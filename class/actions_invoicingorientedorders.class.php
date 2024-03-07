@@ -75,6 +75,7 @@ class ActionsInvoicingorientedorders
 	public function printOriginObjectLine($parameters, &$object, &$action, $hookmanager)
 	{
 		global $restrictlist, $selectedLines,$langs,$db;
+		$langs->load("invoicingorientedorders@invoicingorientedorders");
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 		$lineorder = &$parameters['line'];
 		$qtyfactured = 0;
@@ -137,7 +138,7 @@ class ActionsInvoicingorientedorders
 					// Créer un élément input hidden et l'ajouter au formulaire
 					$("#formtocreate").append('<input type="hidden" name="<?= $lineorder->fk_product?>" value="<?= $qtyfactured?>">');
 					if ($('#formtocreate input[name="balance"]').length === 0) {
-						const bouton = $('<input type="submit"  class="button button-save "value="Créer facture de solde" name="balance">');
+						const bouton = $('<input type="submit"  class="button button-save "value="<?=$langs->trans("CREATE_BALANCE_INVOICE")?>" name="balance">');
 
 						if (<?= $skip?> !== 1) {
 							bouton.prop( "disabled", true );

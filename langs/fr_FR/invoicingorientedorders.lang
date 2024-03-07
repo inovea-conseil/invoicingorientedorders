@@ -50,3 +50,6 @@ MyPageName = My page name
 #
 MyWidget = My widget
 MyWidgetDescription = My widget description
+
+
+CREATE_BALANCE_INVOICE=Créer facture de solde
