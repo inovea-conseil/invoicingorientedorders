@@ -178,7 +178,7 @@ class ActionsInvoicingorientedorders
 			foreach ( $lines as $line) {
 				$qtySolde = GETPOST($line->fk_product, 'alpha');
 				if ( !empty($qtySolde) ) {
-					$qty = $line->qty - $qtySolde  ;
+					$qty = (int) $line->qty - (int) $qtySolde;
 				//	$line->pa_ht = $line->subprice;
 					if ($qty > 0 ) {
 						$object->updateline($line->id, $line->desc, $line->subprice, $qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit, $line->multicurrency_subprice);
