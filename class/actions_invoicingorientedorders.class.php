@@ -84,10 +84,10 @@ class ActionsInvoicingorientedorders
 		$skip = 1;
 		dol_syslog('invoicingorientedorders init skip: '.$skip, LOG_DEBUG);
 		foreach ($object->lines as $line ) {
-            $lineIsProduct = !is_null($line->fk_product) && ($line->product_type !== 9);
-			if (in_array($line->fk_product,$productAlready) && $lineIsProduct) {
+            $lineIsSousTotal = is_null($line->fk_product) && ($line->product_type == 9) && (isset($line->array_options['options_soustotal_type']) && ($line->array_options['options_soustotal_type'] > 0));
+			if (in_array($line->fk_product,$productAlready) && !$lineIsSousTotal) {
 				$skip = 0;
-				dol_syslog('invoicingorientedorders skip: '.$skip.' line already in array or not product', LOG_DEBUG);
+				dol_syslog('invoicingorientedorders skip: '.$skip.' line already in array or is SousTotal', LOG_DEBUG);
 				break;
 			}
 			$productAlready[] = $line->fk_product;
