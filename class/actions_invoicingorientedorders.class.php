@@ -74,7 +74,7 @@ class ActionsInvoicingorientedorders
 
 	public function printOriginObjectLine($parameters, &$object, &$action, $hookmanager)
 	{
-		global $restrictlist, $selectedLines,$langs,$db;
+		global $conf, $restrictlist, $selectedLines,$langs,$db;
 		$langs->load("invoicingorientedorders@invoicingorientedorders");
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 		$lineorder = &$parameters['line'];
@@ -116,8 +116,8 @@ class ActionsInvoicingorientedorders
 				}
 			}
 			if ($skip) {
-				$lineIsSousTotal = is_null($lineorder->fk_product) && ($lineorder->product_type == 9);
-                if(!$lineIsSousTotal) {
+				$moduleSousTotalExistsEnabled = isset($conf->soustotal->enabled);
+                if(!$moduleSousTotalExistsEnabled) {
 	                $label .= ($lineorder->fk_product_type == 0 ? img_object($langs->trans(''), 'product') : img_object($langs->trans(''), 'service') ). " " .  $lineorder->ref . " - " . (!empty($lineorder->label) ? $lineorder->label: $lineorder->libelle );
 	                echo '<tr> 	<td class="linecolref"> ' . $label . $lineorder->label . ' </td>
 							<td class="linecoldescription"> ' . $lineorder->desc . ' </td>
