@@ -84,7 +84,7 @@ class ActionsInvoicingorientedorders
 		$skip = 1;
 		dol_syslog('invoicingorientedorders init skip: '.$skip, LOG_DEBUG);
 		foreach ($object->lines as $line ) {
-            $lineIsSousTotal = is_null($line->fk_product) && ($line->product_type == 9) && (isset($line->array_options['options_soustotal_type']) && ($line->array_options['options_soustotal_type'] > 0));
+            $lineIsSousTotal = is_null($line->fk_product) && ($line->product_type == 9);
 			if (in_array($line->fk_product,$productAlready) && !$lineIsSousTotal) {
 				$skip = 0;
 				dol_syslog('invoicingorientedorders skip: '.$skip.' line already in array or is SousTotal', LOG_DEBUG);
@@ -116,24 +116,27 @@ class ActionsInvoicingorientedorders
 				}
 			}
 			if ($skip) {
-				$label .= ($lineorder->fk_product_type == 0 ? img_object($langs->trans(''), 'product') : img_object($langs->trans(''), 'service') ). " " .  $lineorder->ref . " - " . (!empty($lineorder->label) ? $lineorder->label: $lineorder->libelle );
-				echo '<tr> 	<td class="linecolref"> ' . $label . $lineorder->label . ' </td>
+				$lineIsSousTotal = is_null($lineorder->fk_product) && ($lineorder->product_type == 9);
+                if(!$lineIsSousTotal) {
+	                $label .= ($lineorder->fk_product_type == 0 ? img_object($langs->trans(''), 'product') : img_object($langs->trans(''), 'service') ). " " .  $lineorder->ref . " - " . (!empty($lineorder->label) ? $lineorder->label: $lineorder->libelle );
+	                echo '<tr> 	<td class="linecolref"> ' . $label . $lineorder->label . ' </td>
 							<td class="linecoldescription"> ' . $lineorder->desc . ' </td>
 							<td class="linecolvat right"> ' . vatrate($lineorder->tva_tx, true) . ' </td>
 							<td class="linecoluht right"> ' . price($lineorder->subprice) . ' </td>';
-				if (isModEnabled("multicurrency")) {
-					print '<td class="linecoluht_currency right">  ' . price($lineorder->multicurrency_subprice) . ' </td>';
-				}
-				print '<td class="linecolqty right"> ' . $qtyfactured ."/". $lineorder->qty . ' </td>';
-				if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-					print '<td class="linecoluseunit left">'.$lineorder->getLabelOfUnit('long').'</td>';
-				}
+	                if (isModEnabled("multicurrency")) {
+		                print '<td class="linecoluht_currency right">  ' . price($lineorder->multicurrency_subprice) . ' </td>';
+	                }
+	                print '<td class="linecolqty right"> ' . $qtyfactured ."/". $lineorder->qty . ' </td>';
+	                if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		                print '<td class="linecoluseunit left">'.$lineorder->getLabelOfUnit('long').'</td>';
+	                }
 
-				echo '
+	                echo '
 						<td class="linecoldiscount right"> ' . vatrate($lineorder->remise_percent,true) . ' </td>
 						<td class="linecolht right"> ' . price($lineorder->total_ht) . ' </td>
 						<td class="center"> <input id="cb' . $lineorder->id . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $lineorder->id . '" checked="checked" > </td>
 					</tr> ';
+                }
 			}
 			?>
 
