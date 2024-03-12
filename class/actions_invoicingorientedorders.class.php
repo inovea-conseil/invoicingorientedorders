@@ -82,12 +82,14 @@ class ActionsInvoicingorientedorders
 		$label ="";
 		$productAlready = array();
 		$skip = 1;
+        $objectHasNonProductLines = false;
 		dol_syslog('invoicingorientedorders init skip: '.$skip, LOG_DEBUG);
 		foreach ($object->lines as $line ) {
-            $lineIsSousTotal = is_null($line->fk_product) && ($line->product_type == 9);
-			if (in_array($line->fk_product,$productAlready) && !$lineIsSousTotal) {
+            $lineIsNotProduct = is_null($line->fk_product) && ($line->product_type == 9);
+            $objectHasNonProductLines = $lineIsNotProduct ?: $objectHasNonProductLines;
+			if (in_array($line->fk_product,$productAlready) && !$lineIsNotProduct) {
 				$skip = 0;
-				dol_syslog('invoicingorientedorders skip: '.$skip.' line already in array or is SousTotal', LOG_DEBUG);
+				dol_syslog('invoicingorientedorders skip: '.$skip.' line already in array and is a product', LOG_DEBUG);
 				break;
 			}
 			$productAlready[] = $line->fk_product;
@@ -116,8 +118,7 @@ class ActionsInvoicingorientedorders
 				}
 			}
 			if ($skip) {
-				$moduleSousTotalExistsEnabled = isset($conf->soustotal->enabled);
-                if(!$moduleSousTotalExistsEnabled) {
+                if(!$objectHasNonProductLines) {
 	                $label .= ($lineorder->fk_product_type == 0 ? img_object($langs->trans(''), 'product') : img_object($langs->trans(''), 'service') ). " " .  $lineorder->ref . " - " . (!empty($lineorder->label) ? $lineorder->label: $lineorder->libelle );
 	                echo '<tr> 	<td class="linecolref"> ' . $label . $lineorder->label . ' </td>
 							<td class="linecoldescription"> ' . $lineorder->desc . ' </td>
