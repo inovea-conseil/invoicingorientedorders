@@ -117,7 +117,8 @@ $item->setAsThirdpartyType();
 */
 // Setup conf INVOICINGORIENTEDORDERS_MYPARAM4 : exemple of quick define write style
 $formSetup->newItem('INVOICINGORIENTEDORDERS_COUNTDRAFTS')->setAsYesNo();
-$item = $formSetup->newItem('INVOICINGORIENTEDORDERS_BLOCKIFDRAFTS')->setAsYesNo();
+$formSetup->newItem('INVOICINGORIENTEDORDERS_BLOCKIFDRAFTS')->setAsYesNo();
+$formSetup->newItem('INVOICINGORIENTEDORDERS_HIDEFORMPRODUCTLINES')->setAsYesNo();
 /*
 // Setup conf INVOICINGORIENTEDORDERS_MYPARAM5
 $formSetup->newItem('INVOICINGORIENTEDORDERS_MYPARAM5')->setAsEmailTemplate('thirdparty');
