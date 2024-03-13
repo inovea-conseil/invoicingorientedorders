@@ -82,11 +82,12 @@ class ActionsInvoicingorientedorders
 		$label ="";
 		$productAlready = array();
 		$skip = 1;
-        $objectHasNonProductLines = false;
+		$blockDrafts = dolibarr_get_const($db, "INVOICINGORIENTEDORDERS_BLOCKIFDRAFTS", $conf->entity);
+		$countDrafts = dolibarr_get_const($db, "INVOICINGORIENTEDORDERS_COUNTDRAFTS", $conf->entity);
+		$hideFormProductLines = dolibarr_get_const($db, "INVOICINGORIENTEDORDERS_HIDEFORMPRODUCTLINES", $conf->entity);
 		dol_syslog('invoicingorientedorders init skip: '.$skip, LOG_DEBUG);
 		foreach ($object->lines as $line ) {
             $lineIsNotProduct = is_null($line->fk_product) && ($line->product_type == 9);
-            $objectHasNonProductLines = $lineIsNotProduct ?: $objectHasNonProductLines;
 			if (in_array($line->fk_product,$productAlready) && !$lineIsNotProduct) {
 				$skip = 0;
 				dol_syslog('invoicingorientedorders skip: '.$skip.' line already in array and is a product', LOG_DEBUG);
@@ -104,7 +105,7 @@ class ActionsInvoicingorientedorders
 					dol_syslog('invoicingorientedorders skip: '.$skip.' not standard invoice', LOG_DEBUG);
 					break;
 				}
-				if (dolibarr_get_const($db, "INVOICINGORIENTEDORDERS_COUNTDRAFTS") || $invoice->status != $invoice::STATUS_DRAFT) {
+				if ($countDrafts || $invoice->status != $invoice::STATUS_DRAFT) {
 					foreach ($invoice->lines as $line) {
 						if ($lineorder->fk_product == $line->fk_product) {
 							$qtyfactured += $line->qty;
@@ -112,13 +113,13 @@ class ActionsInvoicingorientedorders
 						}
 					}
 				}
-				if(dolibarr_get_const($db, "INVOICINGORIENTEDORDERS_BLOCKIFDRAFTS") &&  $invoice->status == $invoice::STATUS_DRAFT) {
+				if($blockDrafts &&  $invoice->status == $invoice::STATUS_DRAFT) {
 					$skip = 2;
 					dol_syslog('invoicingorientedorders skip: '.$skip, LOG_DEBUG);
 				}
 			}
 			if ($skip) {
-                if(!$objectHasNonProductLines) {
+                if(!$hideFormProductLines) {
 	                $label .= ($lineorder->fk_product_type == 0 ? img_object($langs->trans(''), 'product') : img_object($langs->trans(''), 'service') ). " " .  $lineorder->ref . " - " . (!empty($lineorder->label) ? $lineorder->label: $lineorder->libelle );
 	                echo '<tr> 	<td class="linecolref"> ' . $label . $lineorder->label . ' </td>
 							<td class="linecoldescription"> ' . $lineorder->desc . ' </td>
