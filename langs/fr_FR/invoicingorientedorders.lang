@@ -30,7 +30,7 @@ Settings = Settings
 InvoicingorientedordersSetupPage = Page admin
 INVOICINGORIENTEDORDERS_COUNTDRAFTS = Inclure les factures brouillons dans le calcul du solde
 INVOICINGORIENTEDORDERS_BLOCKIFDRAFTS = Bloquer la création de facture de solde si une ou plusieurs factures sont en brouillons
-
+INVOICINGORIENTEDORDERS_HIDEFORMPRODUCTLINES = Cacher les lignes produits générées par ce module sur le formulaire de création facture
 
 #
 # About page
