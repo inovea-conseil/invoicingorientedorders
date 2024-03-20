@@ -74,20 +74,26 @@ class ActionsInvoicingorientedorders
 
 	public function printOriginObjectLine($parameters, &$object, &$action, $hookmanager)
 	{
-		global $restrictlist, $selectedLines,$langs,$db;
+		global $conf, $restrictlist, $selectedLines,$langs,$db;
+		$langs->load("invoicingorientedorders@invoicingorientedorders");
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 		$lineorder = &$parameters['line'];
 		$qtyfactured = 0;
 		$label ="";
 		$productAlready = array();
 		$skip = 1;
+		$blockDrafts = dolibarr_get_const($db, "INVOICINGORIENTEDORDERS_BLOCKIFDRAFTS", $conf->entity);
+		$countDrafts = dolibarr_get_const($db, "INVOICINGORIENTEDORDERS_COUNTDRAFTS", $conf->entity);
+		$hideFormProductLines = dolibarr_get_const($db, "INVOICINGORIENTEDORDERS_HIDEFORMPRODUCTLINES", $conf->entity);
+		dol_syslog('invoicingorientedorders init skip: '.$skip, LOG_DEBUG);
 		foreach ($object->lines as $line ) {
-			if (in_array($line->fk_product,$productAlready)) {
+            $lineIsNotProduct = is_null($line->fk_product) && ($line->product_type == 9);
+			if (in_array($line->fk_product,$productAlready) && !$lineIsNotProduct) {
 				$skip = 0;
+				dol_syslog('invoicingorientedorders skip: '.$skip.' line already in array and is a product', LOG_DEBUG);
 				break;
 			}
 			$productAlready[] = $line->fk_product;
-
 		}
 		if ($object->element == "commande") {
 			if ( !isset($object->linkedObjects['facture']) || empty($object->linkedObjects['facture'])) {
@@ -96,9 +102,10 @@ class ActionsInvoicingorientedorders
 			foreach ($object->linkedObjects['facture'] as $invoice ) {
 				if ($invoice->type != 0 ) {
 					$skip = 0;
+					dol_syslog('invoicingorientedorders skip: '.$skip.' not standard invoice', LOG_DEBUG);
 					break;
 				}
-				if (dolibarr_get_const($db, "INVOICINGORIENTEDORDERS_COUNTDRAFTS") || $invoice->status != $invoice::STATUS_DRAFT) {
+				if ($countDrafts || $invoice->status != $invoice::STATUS_DRAFT) {
 					foreach ($invoice->lines as $line) {
 						if ($lineorder->fk_product == $line->fk_product) {
 							$qtyfactured += $line->qty;
@@ -106,29 +113,32 @@ class ActionsInvoicingorientedorders
 						}
 					}
 				}
-				if(dolibarr_get_const($db, "INVOICINGORIENTEDORDERS_BLOCKIFDRAFTS") &&  $invoice->status == $invoice::STATUS_DRAFT) {
+				if($blockDrafts &&  $invoice->status == $invoice::STATUS_DRAFT) {
 					$skip = 2;
+					dol_syslog('invoicingorientedorders skip: '.$skip, LOG_DEBUG);
 				}
 			}
 			if ($skip) {
-				$label .= ($lineorder->fk_product_type == 0 ? img_object($langs->trans(''), 'product') : img_object($langs->trans(''), 'service') ). " " .  $lineorder->ref . " - " . (!empty($lineorder->label) ? $lineorder->label: $lineorder->libelle );
-				echo '<tr> 	<td class="linecolref"> ' . $label . $lineorder->label . ' </td>
+                if(!$hideFormProductLines) {
+	                $label .= ($lineorder->fk_product_type == 0 ? img_object($langs->trans(''), 'product') : img_object($langs->trans(''), 'service') ). " " .  $lineorder->ref . " - " . (!empty($lineorder->label) ? $lineorder->label: $lineorder->libelle );
+	                echo '<tr> 	<td class="linecolref"> ' . $label . $lineorder->label . ' </td>
 							<td class="linecoldescription"> ' . $lineorder->desc . ' </td>
 							<td class="linecolvat right"> ' . vatrate($lineorder->tva_tx, true) . ' </td>
 							<td class="linecoluht right"> ' . price($lineorder->subprice) . ' </td>';
-				if (isModEnabled("multicurrency")) {
-					print '<td class="linecoluht_currency right">  ' . price($lineorder->multicurrency_subprice) . ' </td>';
-				}
-				print '<td class="linecolqty right"> ' . $qtyfactured ."/". $lineorder->qty . ' </td>';
-				if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-					print '<td class="linecoluseunit left">'.$lineorder->getLabelOfUnit('long').'</td>';
-				}
+	                if (isModEnabled("multicurrency")) {
+		                print '<td class="linecoluht_currency right">  ' . price($lineorder->multicurrency_subprice) . ' </td>';
+	                }
+	                print '<td class="linecolqty right"> ' . $qtyfactured ."/". $lineorder->qty . ' </td>';
+	                if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		                print '<td class="linecoluseunit left">'.$lineorder->getLabelOfUnit('long').'</td>';
+	                }
 
-				echo '
+	                echo '
 						<td class="linecoldiscount right"> ' . vatrate($lineorder->remise_percent,true) . ' </td>
 						<td class="linecolht right"> ' . price($lineorder->total_ht) . ' </td>
 						<td class="center"> <input id="cb' . $lineorder->id . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $lineorder->id . '" checked="checked" > </td>
 					</tr> ';
+                }
 			}
 			?>
 
@@ -137,7 +147,7 @@ class ActionsInvoicingorientedorders
 					// Créer un élément input hidden et l'ajouter au formulaire
 					$("#formtocreate").append('<input type="hidden" name="<?= $lineorder->fk_product?>" value="<?= $qtyfactured?>">');
 					if ($('#formtocreate input[name="balance"]').length === 0) {
-						const bouton = $('<input type="submit"  class="button button-save "value="Créer facture de solde" name="balance">');
+						const bouton = $('<input type="submit"  class="button button-save "value="<?=$langs->trans("CREATE_BALANCE_INVOICE")?>" name="balance">');
 
 						if (<?= $skip?> !== 1) {
 							bouton.prop( "disabled", true );
@@ -173,7 +183,7 @@ class ActionsInvoicingorientedorders
 			foreach ( $lines as $line) {
 				$qtySolde = GETPOST($line->fk_product, 'alpha');
 				if ( !empty($qtySolde) ) {
-					$qty = $line->qty - $qtySolde  ;
+					$qty = (int) $line->qty - (int) $qtySolde;
 				//	$line->pa_ht = $line->subprice;
 					if ($qty > 0 ) {
 						$object->updateline($line->id, $line->desc, $line->subprice, $qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit, $line->multicurrency_subprice);
